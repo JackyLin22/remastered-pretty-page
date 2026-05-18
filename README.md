@@ -1,3 +1,3 @@
-# Demo for INST630!
+Remastering a past project from one of my classes to see if I can make it more appealing.
 
-This is a demonstration page that you get to restyle!
+Creating a better page to be more accessible and presented better for anyone to see.
