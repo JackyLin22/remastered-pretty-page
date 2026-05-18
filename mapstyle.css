@@ -1,0 +1,14 @@
+/* 
+    Include this file after style.css in your index.html
+*/
+
+
+#map {
+    display: flex; /* make sure a box shows up */
+    height: 360px;  /* Required to let the map load in at all */
+    min-width: 100%;
+    width: auto; /* Map will be very small without this*/
+    border-radius: 7.5px;  /* Just for looks to make sure box is in */
+    margin-bottom: 1rem;  /* Keep spacing below map to other boxes */
+  }
+  
