@@ -1,69 +1,183 @@
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Food Safety in Prince George's County | Jacky Lin</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Ewert&display=swap" rel="stylesheet">
 
-    <!-- CSS Stylesheets -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
-    integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
-    crossorigin=""/>
+    <title>Food Safety in Prince George's County | Jacky Lin</title>
+
+    <meta
+      name="description"
+      content="Interactive restaurant food safety map for Prince George's County created by Jacky Lin."
+    />
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ewert&family=Open+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+      integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+      crossorigin=""
+    />
+
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="mapstyle.css" />
 
-     <!-- Make sure you put this AFTER Leaflet's CSS -->
- <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
- integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
- crossorigin=""></script>
+    <!-- Leaflet JS -->
+    <script
+      src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+      integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+      crossorigin=""
+      defer
+    ></script>
+
+    <!-- Custom Script -->
+    <script src="./script.js" defer></script>
   </head>
+
   <body>
     <div class="wrapper">
-      <header class="header"><h1>Jacky Lin INST630 Project (Food Safety in Prince George's County)</h1></header>
-      <!-- wrapper -->
-      <div class="container">
-        <!-- container -->
-        <div class="left_section box">
-          <!-- left inputs -->
-          <h2>Form Inputs</h2>
-          <form action="/api" class="box main_form">
-            <div>
-              <label for="resto">Filter By Restaurant Name</label>
-              <input type="text" name="resto" id="resto">
-            </div>
-            <button type="submit" aria-label="Filter restaurant list">
-              Change List
-            </button>
-            <!-- This looks empty but is a load animation! -->
-            <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
-          </form>
-        </div>
-        <div class="right_section box">
-          <!-- right side -->
-          <!-- images box -->
-          <h2>Local Restaurant Map</h2>
+      <!-- Header -->
+      <header class="header">
+        <h1>Food Safety in Prince George's County</h1>
 
-          <div id="map" class="box"></div>
-          <div class="box" id="restaurant_list">
-            <!-- description box -->
-            A list of restaurants from an API
+        <p class="subtitle">
+          Interactive restaurant inspection and food safety visualization project
+          by Jacky Lin
+        </p>
+      </header>
+
+      <!-- Main Content -->
+      <main class="container">
+        <!-- Left Section -->
+        <section
+          class="left_section"
+          aria-labelledby="filter-heading"
+        >
+          <h2 id="filter-heading">Search Restaurants</h2>
+
+          <p>
+            Filter restaurants by name to explore inspection and food safety
+            information across Prince George’s County.
+          </p>
+
+          <form action="/api" class="main_form">
+            <div class="form-group">
+              <label for="resto">
+                Restaurant Name
+              </label>
+
+              <input
+                type="text"
+                name="resto"
+                id="resto"
+                placeholder="Enter restaurant name..."
+                aria-describedby="search-help"
+              />
+
+              <small id="search-help">
+                Example: McDonald's, Chipotle, or Starbucks
+              </small>
+            </div>
+
+            <button
+              type="submit"
+              aria-label="Filter restaurant list"
+            >
+              Search Restaurants
+            </button>
+
+            <!-- Loading Animation -->
+            <div
+              class="lds-ellipsis"
+              aria-hidden="true"
+            >
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </form>
+        </section>
+
+        <!-- Right Section -->
+        <section
+          class="right_section"
+          aria-labelledby="map-heading"
+        >
+          <h2 id="map-heading">Restaurant Safety Map</h2>
+
+          <p>
+            Browse restaurant inspection locations and discover food safety data
+            using the interactive map below.
+          </p>
+
+          <!-- Map -->
+          <div
+            id="map"
+            role="application"
+            aria-label="Interactive map displaying restaurant locations"
+          ></div>
+
+          <!-- Restaurant List -->
+          <div
+            id="restaurant_list"
+            aria-live="polite"
+          >
+            <p>Restaurant results will appear here.</p>
           </div>
-        </div>
-      </div>
-      <div class="img-wrap">
-        <img src = "https://builddesigncenter.com/wp-content/uploads/2024/03/restaurants-in-chantilly.jpg" alt = "Picture of a Restaurant" class = "center"/>
-        <img src="https://d1yr8cjvaju39m.cloudfront.net/uploads/_newsArticle/8BuschWinsFontana13.jpg" alt="Kyle Busch 2023 Auto Club Win"/>
-      </div>
+        </section>
+      </main>
+
+      <!-- Image Gallery -->
+      <section
+        class="img-wrap"
+        aria-label="Restaurant gallery"
+      >
+        <img
+          src="https://builddesigncenter.com/wp-content/uploads/2024/03/restaurants-in-chantilly.jpg"
+          alt="Interior dining area of a modern restaurant"
+          loading="lazy"
+        />
+
+        <img
+          src="https://d1yr8cjvaju39m.cloudfront.net/uploads/_newsArticle/8BuschWinsFontana13.jpg"
+          alt="Kyle Busch celebrating a race win"
+          loading="lazy"
+        />
+      </section>
+
+      <!-- Footer -->
       <footer class="footer">
-        GITHUB URL:
-        <a href="https://github.com/JackyLin22/">Github</a>
-        GLITCH URL:
-        <a href="https://glitch.com/edit/#!/stormy-scarce-winterberry">Glitch</a>
+        <p>Created by Jacky Lin</p>
+
+        <nav aria-label="External links">
+          <a
+            href="https://github.com/JackyLin22/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub
+          </a>
+
+          <a
+            href="https://glitch.com/edit/#!/stormy-scarce-winterberry"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Glitch Project
+          </a>
+        </nav>
       </footer>
     </div>
-    <script src="./script.js"></script>
   </body>
 </html>
