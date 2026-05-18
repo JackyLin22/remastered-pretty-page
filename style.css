@@ -4,301 +4,209 @@ START Lab Basic Page Styles
 
 /* Our default values set as CSS variables */
 :root {
-  --color-gray: rgb(239, 239, 239);
-  --color-text: rgb(74, 74, 74);
-  --color-bg: #69F7BE;
-  --color-text-main: #000000;
-  --color-primary: #FFFF00;
-  --wrapper-height: 87vh;
-  --image-max-width: 300px;
-  --image-margin: 3rem;
-  --font-family: ‘Open Sans’, Verdana, sans-serif;
-  --font-weight: 400;
-  --line-height: 1.5;
+  --color-bg: #f4f7fb;
+  --color-surface: #ffffff;
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-text: #1f2937;
+  --color-text-light: #6b7280;
+  --color-border: #d1d5db;
+
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  --font-family: "Open Sans", Verdana, sans-serif;
+  --line-height: 1.6;
+  --radius: 16px;
 }
 
-/* Basic page style resets */
+/* Reset */
 * {
   box-sizing: border-box;
 }
-[hidden] {
-  display: none !important;
-}
-
-/* 
-  These rules apply to actual HTML elements with no labelling!
-  So: they style the tags directly
-*/
 
 html {
-  background-color: var(--color-bg);
   font-size: 16px;
-  min-width: 300px;
-  overflow-x: hidden;
-  overflow-y: scroll;
-
-  /* these are specific to different browsers */
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  -webkit-text-size-adjust: 100%;
-  -moz-text-size-adjust: 100%;
-  text-size-adjust: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
-  font-family: Sans-serif; /*  This is an example of a custom CSS property  */
   margin: 0;
-  padding: 0;
-  background-color: rgb(75, 225, 225);
-  color: rgb(245, 15, 85);
+  font-family: var(--font-family);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: var(--line-height);
 }
 
-
-a {
-  display: inline-block;
-  text-decoration: none;
-}
-
-h2 {
-  margin:0;
-  padding:0;
-  padding-bottom:1.5rem;
-}
-
-form {
-  accent-color: hsla(120, 100%, 50%, 0.482);
-}
-
-/******************************************************************************
-IMPORT DECLARATIONS
-
-these import styles from other sheets, in order
-******************************************************************************/
-
-@import url("./small_screen.css");
-@import url("./mapstyle.css");
-@import url("./carousel.css");
-
-/******************************************************************************
-CLASS DECLARATIONS
-
-  - These styles use 'class names'
-  - You can apply them by using the 'class' attribute on your HTML
-  - like this: <div class="wrapper">
-  - note that the period vanishes there!
-******************************************************************************/
-
+/* Layout */
 .wrapper {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  margin: 0;
-  flex: 1;
 }
 
 .container {
-  margin: 0 20px;
   display: flex;
-  justify-content: space-around;
-  align-items: start;
-  flex: 1;
   gap: 2rem;
+  padding: 2rem;
+  align-items: flex-start;
 }
 
-
+/* Header */
 .header {
-  font-family: "Ewert", serif;
-  font-weight: 400;
-  font-style: normal;
-  color: rgb(255, 255,255); 
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: white;
+  text-align: center;
+  padding: 2rem 1rem;
+  box-shadow: var(--shadow);
 }
-
-
-/*
-  This rule implies that the H1 tag lives within another HTML tag
-  It "inherits" some rules from the above
-  Those rules won't apply to an h1 that's outside a block with the class of 'header'
-*/
 
 .header h1 {
-  display: block;
-  /* this will push other blocks out of the way */
-
-  /* colors */
-  color: var(--color-text-2);
-  
-
-  /* shapes */
-  font-size: 1.5rem;
-  padding: 1.25rem;
-  margin:0; /* removing the margin on h1 tags means the header pins to the top */
-  text-align: center;
-  background-color: rgb(255, 0, 0);
-  
-  
+  margin: 0;
+  font-size: 2rem;
+  font-family: "Ewert", serif;
 }
 
-/*
-  Rules can be combined on a block to apply the 'cascade' in order
-  So you can use two classnames in a single class attribute
-  like: <div class="box section">
-
-  Rules may combine in unexpected ways - remember that the LAST thing written in this file will have "priority"
-  And will be what displays in your client
-*/
-
-.box {
-  width: fit-content;
-  height: fit-content;
-  width: 80%;
-  padding: 2rem;
-  margin: 0 auto;
-}
-
-.left_section {
-  width: 100%;
-  flex: 1 1 100%;
-  margin: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0px 0px 15px #000000;
-  border-radius: 1em;
-}
-
+/* Sections */
+.left_section,
 .right_section {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 100%;
-  margin: 1rem;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0px 0px 15px #000000;
-  border-radius: 1em;
+  background-color: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  flex: 1;
 }
 
-img {
-  width: 550px;
-  max-width: 100%; /* This ensures the image doesn't overflow its container */
-  height: auto;
-  border-radius: 2em;
+h2 {
+  margin-top: 0;
+  color: var(--color-primary);
+  font-size: 1.5rem;
+}
+
+/* Form Styling */
+form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+form input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+form input:focus {
+  outline: 3px solid rgba(37, 99, 235, 0.3);
+  border-color: var(--color-primary);
+}
+
+/* Button */
+button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.9rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: var(--color-primary-hover);
+}
+
+button:focus {
+  outline: 3px solid rgba(37, 99, 235, 0.3);
+}
+
+/* Map */
+#map {
+  width: 100%;
+  min-height: 400px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+/* Restaurant List */
+#restaurant_list {
+  background-color: #f9fafb;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
   padding: 1rem;
 }
 
+/* Images */
 .img-wrap {
   display: flex;
-  flex-grow: 1;
+  gap: 1rem;
   justify-content: center;
+  padding: 2rem;
+  flex-wrap: wrap;
 }
 
-.center .right_section {
-  display: flex;
-  justify-content: center;
-  place-items: center;
-  text-align: center;
-  margin: 2rem 0;
+img {
+  width: 100%;
+  max-width: 500px;
+  border-radius: var(--radius);
+  object-fit: cover;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s ease;
 }
 
+img:hover {
+  transform: scale(1.02);
+}
 
-/*
-  This block is actually dependent on the "container" block having a flex set on it
-  and the "wrapper" block displaying as a flex column with a "vertical height" (vh) of 100.
-  That serves to cram the footer to the bottom of the page.
-*/
-
+/* Footer */
 .footer {
-  display: block;
-  background-color: rgb(255, 0, 0);
-  flex-shrink: 0;
-  padding: 1.25rem;
-  font-family: "Ewert", serif;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: rgb(0, 0, 0);
+  margin-top: auto;
+  background-color: #111827;
+  color: white;
   text-align: center;
+  padding: 1.5rem;
 }
 
 .footer a {
-  text-decoration: underline;
-  color: rgb(255, 255, 255);
-}
-
-/*
-  This is an example of a 'pseudoclass'
-  In this instance, it says what to do if a mouse hovers over a link
-  This is pretty desktop-specific, since there's no hover function on touchscreens
-*/
-.footer a:hover {
-  /* Hue, saturation, luminosity, alpha */
-  background-color: hsla(75, 80%, 100%, 0.15);
-  /* red, green, blue, alpha */
+  color: #93c5fd;
+  margin: 0 0.5rem;
   text-decoration: none;
 }
 
-.subtitle {
-  color: rgba(20, 75, 0, 1);
-  margin: 0px;
-  margin-bottom: 5px;
+.footer a:hover,
+.footer a:focus {
+  text-decoration: underline;
 }
 
-/*
-Form Styles
-*/
-form input {
-  /* This is a hack to make sure our boxes line up with one another nicely */
-  width: 100%;
-  width: -moz-available;          /* WebKit-based browsers will ignore this. */
-  width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
-  width: fill-available;
-
-  /* here we are setting white space correctly */
-  margin-bottom: 1rem;
-  height: 2rem;
-  border-radius: 4px;
-  display: block;
+/* Accessibility */
+a:focus,
+button:focus,
+input:focus {
+  outline-offset: 3px;
 }
 
-form label {
-  width: 100%;
-  width: -moz-available;          /* WebKit-based browsers will ignore this. */
-  width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
-  width: fill-available;
-  align-items: flex-start;
-
-  display: block; /* this turns the label text into a box we can set margins on */
-  margin-bottom: 0.5rem;
-}
-
-
-
-@media screen and (max-width: 736px) {
+/* Mobile */
+@media screen and (max-width: 768px) {
   .container {
-    display: flex;
     flex-direction: column;
-    gap: 1rem;
     padding: 1rem;
-    margin-left: 1;
-    margin-right: 2rem;
   }
 
-  .left_section, .right_section {
-    flex: 1 1 100%;
+  .header h1 {
+    font-size: 1.5rem;
   }
 
-  .center {
-    max-width: 100%;
-  }
-  
-  box {
-    width: 80%;
-  }
-  
-  img {
+  .left_section,
+  .right_section {
     width: 100%;
   }
-  
-  .img-wrap {
-    display: flex;
+
+  img {
+    max-width: 100%;
   }
 }
-
