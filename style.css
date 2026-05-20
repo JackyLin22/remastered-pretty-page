@@ -141,6 +141,55 @@ button:focus {
   padding: 1rem;
 }
 
+/* Restaurant Cards */
+
+.restaurant-results {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.restaurant-card {
+  background: white;
+  border: 1px solid #d1d5db;
+  border-left: 6px solid #2563eb;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.restaurant-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: #1d4ed8;
+}
+
+.restaurant-card p {
+  margin: 0.35rem 0;
+}
+
+.restaurant-card .status {
+  font-weight: bold;
+}
+
+.status.good {
+  color: green;
+}
+
+.status.warning {
+  color: #d97706;
+}
+
+.status.bad {
+  color: red;
+}
+
+.placeholder {
+  color: #6b7280;
+  font-style: italic;
+}
+
 /* Images */
 .img-wrap {
   display: flex;

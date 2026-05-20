@@ -1,140 +1,210 @@
-function getRandomIntInclusive(min, max) {
-  const min2 = Math.ceil(min);
-  const max2 = Math.floor(max);
-  return Math.floor(Math.random() * (max2 - min2 + 1) + min2);
-}
-
 function initMap() {
-  // so much so familiar, but we will need this to inject markers later!
-  console.log('initMap');
+  console.log('Map initialized');
+
   const map = L.map('map').setView([38.9869, -76.9426], 10);
+
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 13,
     attribution: '© OpenStreetMap'
-}).addTo(map);
-  return map; // this "return" is how we get our active map object back for marker injection later
-}
+  }).addTo(map);
 
-function markerPlace(array, map) {
-  // we're going to store some state here by returning the markers so we can remove them later.
-  console.log(array);
-  // First, we have to remove our pre-existing markers from the map
-  map.eachLayer((layer) => {
-    if (layer instanceof L.Marker) {
-      // Do marker specific actions here
-      console.log(layer);
-      layer.remove();
-    }
-  });
-
-  // now for each element in our restaurant array, we add a marker to the map
-  // we already checked in our filter that the required column exists
-  array.forEach((m) => {
-    // destructure our coordinates from the restaurant object
-    const {coordinates} = m.geocoded_column_1;
-
-    // the restaurant object has reversed lat and long sometimes
-    L.marker([coordinates[1], coordinates[0]]).addTo(map);
-  });
-}
-
-function injectHTML(list) {
-  console.log('fired injectHTML');
-  const target = document.querySelector('#restaurant_list');
-  target.innerHTML = '';
-  list.forEach((item) => {
-    const str = `<li>${item.name} </li>`;
-    target.innerHTML += str;
-  });
-}
-
-function processRestaurants(list) {
-  /* This method does not guarantee uniqueness, but it is about as simple to follow as is possible */
-  if(!list) {
-    console.log("Missing list")
-    return
-  }
-  console.log('fired restaurants list');
-  const range = [...Array(15).keys()];
-  const newArray = range.map((m) => {
-    const index = getRandomIntInclusive(0, list.length);
-    return list[index];
-  });
-  return newArray;
+  return map;
 }
 
 /*
-    ## Main Event
+  Remove all old markers before adding new ones
+*/
+function clearMarkers(map) {
+  map.eachLayer((layer) => {
+    if (layer instanceof L.Marker) {
+      map.removeLayer(layer);
+    }
+  });
+}
+
+/*
+  Add markers with popups
+*/
+function markerPlace(array, map) {
+  clearMarkers(map);
+
+  array.forEach((restaurant) => {
+    const coordinates = restaurant.geocoded_column_1?.coordinates;
+
+    if (!coordinates) return;
+
+    const longitude = coordinates[0];
+    const latitude = coordinates[1];
+
+    const name = restaurant.name || 'Unknown Restaurant';
+    const address = restaurant.address_line_1 || 'No address available';
+    const category = restaurant.category || 'No category listed';
+
+    const marker = L.marker([latitude, longitude]).addTo(map);
+
+    marker.bindPopup(`
+      <div>
+        <h3>${name}</h3>
+        <p><strong>Category:</strong> ${category}</p>
+        <p><strong>Address:</strong> ${address}</p>
+      </div>
+    `);
+  });
+}
+
+/*
+  Create restaurant result cards
+*/
+function injectHTML(list) {
+  console.log('Injecting restaurant cards');
+
+  const target = document.querySelector('#restaurant_list');
+
+  target.innerHTML = '';
+
+  if (list.length === 0) {
+    target.innerHTML = `
+      <p class="placeholder">
+        No matching restaurants found.
+      </p>
+    `;
+    return;
+  }
+
+  list.forEach((restaurant) => {
+    const name = restaurant.name || 'Unknown Restaurant';
+    const address =
+      restaurant.address_line_1 || 'No address available';
+
+    const city = restaurant.city || '';
+    const category =
+      restaurant.category || 'No category listed';
+
+    const inspection =
+      restaurant.inspection_type || 'No inspection data';
+
+    const card = document.createElement('div');
+
+    card.className = 'restaurant-card';
+
+    card.innerHTML = `
+      <h3>${name}</h3>
+
+      <p>
+        <strong>Category:</strong>
+        ${category}
+      </p>
+
+      <p>
+        <strong>Inspection Type:</strong>
+        ${inspection}
+      </p>
+
+      <p>
+        <strong>Address:</strong>
+        ${address}, ${city}
+      </p>
+    `;
+
+    target.appendChild(card);
+  });
+}
+
+/*
+  Main App
 */
 async function mainEvent() {
-  // NEW CODE - initialise the map from Leaflet
   const map = initMap();
 
-  // Set up our constants, which include our side effect targets
   const form = document.querySelector('.main_form');
-  const submit = document.querySelector('button[type="submit"]');
-  const loadAnimation = document.querySelector('.lds-ellipsis');
-  const restoName = document.querySelector('#resto'); // rearrange our target elements so they are together
+  const submit = document.querySelector(
+    'button[type="submit"]'
+  );
+
+  const loadAnimation =
+    document.querySelector('.lds-ellipsis');
+
+  const restoName = document.querySelector('#resto');
+
   submit.style.display = 'none';
 
-  /* API data request */
-  const results = await fetch('https://data.princegeorgescountymd.gov/resource/umjn-t2iz.json');
-  const arrayFromJson = await results.json(); // convert it to JSON
+  /*
+    Fetch restaurant data
+  */
+  const results = await fetch(
+    'https://data.princegeorgescountymd.gov/resource/umjn-t2iz.json?$limit=1000'
+  );
 
-  if (arrayFromJson.length > 0) { // these functions run once the data has loaded
-    // Show the submit button
+  const arrayFromJson = await results.json();
+
+  if (arrayFromJson.length > 0) {
     submit.style.display = 'block';
-    // Hide the load animation
+
     loadAnimation.classList.remove('lds-ellipsis');
-    loadAnimation.classList.add('lds-ellipsis_hidden');
 
-    // Process our form's button action
-    let currentArray;
-    form.addEventListener('submit', async (submitEvent) => {
+    loadAnimation.classList.add(
+      'lds-ellipsis_hidden'
+    );
+
+    /*
+      Start with all restaurants that have coordinates
+    */
+    let currentArray = arrayFromJson.filter(
+      (item) => Boolean(item.geocoded_column_1)
+    );
+
+    /*
+      Show all restaurants initially
+    */
+    injectHTML(currentArray);
+
+    markerPlace(currentArray, map);
+
+    /*
+      Search on form submit
+    */
+    form.addEventListener('submit', (submitEvent) => {
       submitEvent.preventDefault();
-      currentArray = processRestaurants(arrayFromJson);
 
-      /*
+      const searchValue =
+        restoName.value.toLowerCase();
 
-        If we want to put restaurants on the map, they need a location!
-        Here we're filtering based on whether the lat-long 'geocoded_column_1' value has been found.
-        If it doesn't exist, it will return "undefined,"
-        Which is a "falsey" value - a negative or non-true value
-        Declaring something a "Boolean" like this will "coerce" the result to be true or false
-        In the Input event, we will "chain" two filters to get a refined list
-      */
-      const restaurants = currentArray.filter((item) => Boolean(item.geocoded_column_1));
+      const filteredRestaurants =
+        currentArray.filter((item) => {
+          const lowerCaseName =
+            item.name?.toLowerCase() || '';
 
-      injectHTML(restaurants); // we're passing the data set into the new function
-      markerPlace(restaurants, map); // and here we're adding some markers to the map
+          return lowerCaseName.includes(searchValue);
+        });
+
+      injectHTML(filteredRestaurants);
+
+      markerPlace(filteredRestaurants, map);
     });
 
-    // Process our input field's action
+    /*
+      Live search while typing
+    */
     restoName.addEventListener('input', (event) => {
-      // this is an error catcher, the filter does nothing until something exists
-      if (!currentArray.length) { return; }
+      const query =
+        event.target.value.toLowerCase();
 
-      // Debug logging to make sure the code is doing what we think it is
-      // console.log(event.target.value);
-      // console.log(currentArray);
+      const filteredRestaurants =
+        currentArray.filter((item) => {
+          const lowerCaseName =
+            item.name?.toLowerCase() || '';
 
-      const restaurants = currentArray
-        .filter((item) => {
-          // our first filter handles name comparisons
-          const lowerCaseName = item.name.toLowerCase();
-          const lowerCaseQuery = event.target.value.toLowerCase();
-          return lowerCaseName.includes(lowerCaseQuery);
-        }) // and we can "chain" it to a second filter that checks for locations
-        .filter((item) => Boolean(item.geocoded_column_1));
+          return lowerCaseName.includes(query);
+        });
 
-      if (restaurants.length > 0) {
-        injectHTML(restaurants);
-        // here we use the "map" instance from our initMap function
-        // to attach markers from the restaurants list to the map
-        markerPlace(restaurants, map);
-      }
+      injectHTML(filteredRestaurants);
+
+      markerPlace(filteredRestaurants, map);
     });
   }
 }
 
-document.addEventListener('DOMContentLoaded', async () => mainEvent());
+document.addEventListener(
+  'DOMContentLoaded',
+  async () => mainEvent()
+);
